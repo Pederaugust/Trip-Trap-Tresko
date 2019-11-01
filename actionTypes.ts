@@ -3,4 +3,10 @@
 export const CROSS_ROUTE = 'CROSS_ROUTE'
 export const CIRCLE_ROUTE = 'CIRCLE_ROUTE'
 export const SET_TURN = 'SET_TURN'
-export const RESET_GAME = 'RESET_GAME'
+export const RESET_BOARD = 'RESET_BOARD'
+
+export const PLAYER_1_SCORE = 'PLAYER_1_SCORE'
+export const PLAYER_2_SCORE = 'PLAYER_2_SCORE'
+export const RESET_SCORE = 'RESET_SCORE'
+export const MATCH_NOT_FINISHED = 'MATCH_NOT_FINISHED'
+export const MATCH_FINISHED = 'MATCH_FINISHED'

@@ -1,4 +1,4 @@
-import { CROSS_ROUTE, CIRCLE_ROUTE, SET_TURN, RESET_BOARD, PLAYER_2_SCORE, PLAYER_1_SCORE, RESET_SCORE, MATCH_FINISHED, MATCH_NOT_FINISHED } from './actionTypes'
+import { CROSS_ROUTE, CIRCLE_ROUTE, SET_TURN, RESET_GAME, PLAYER_2_SCORE, PLAYER_1_SCORE, RESET_SCORE } from './actionTypes'
 import { combineReducers } from 'redux'
 
 function markRoute(board: any, payload: any, xo: number) {
@@ -34,7 +34,7 @@ function common(state = {
             return {
                 ...state, turn: action.payload.turn
             }
-        case RESET_BOARD:
+        case RESET_GAME:
             let nextTurn = -1
             if (state.turn == 1){
                 nextTurn = 1
@@ -52,7 +52,6 @@ function common(state = {
 function game(state = {
     player1Score: 0,
     player2Score: 0,
-    finished: false
 }, action: any){
     switch (action.type) {
         case PLAYER_1_SCORE:
@@ -61,18 +60,13 @@ function game(state = {
             return {...state, player2Score: (state.player2Score + 1)}
         case RESET_SCORE:
             return {...state, player1Score: 0, player2Score: 0}
-        case MATCH_FINISHED:
-            return {...state, finished: true}
-        case MATCH_NOT_FINISHED:
-            return {...state, finished: false}
         default:
             return state
     }
 }
 
 const reducers = combineReducers({
-    common,
-    game
+    common
 })
 
 export default reducers

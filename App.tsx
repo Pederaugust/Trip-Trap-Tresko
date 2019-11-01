@@ -2,12 +2,12 @@ import React from 'react';
 import { View } from 'react-native';
 import store  from './store'
 import {Provider } from 'react-redux'
-import Board from './src/Board'
+import Game from './src/Game'
 
 export default function App() {
   return (
     <Provider store={store}>
-        <Board />
+        <Game />
     </Provider>
   );
 }

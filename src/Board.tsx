@@ -3,23 +3,27 @@ import { connect } from 'react-redux'
 import React, { useState } from 'react'
 import Route from './Route'
 import store from '../store'
-import { reset } from '../actions'
-
-const DeviceWidth = Dimensions.get('window').width
+import { reset, player2Score, player1Score, finished } from '../actions'
+import { NO, O, X} from '../types'
 
 interface IProps {
     board: any
-    current: number
 }
 
-function resetGame() {
-    store.dispatch(reset())
+function dispatchScores(winner: number) {
+    switch (winner) {
+        case X:
+            store.dispatch(player1Score());
+            return;
+        case O:
+            store.dispatch(player2Score());
+            return;
+    }
 }
 
-function checkBoardForWinner(board: any) {
-
+function checkVertical(board: any) {
     for (let i = 0; i < 3; i++) {
-        if (board[i][0] == 0) {
+        if (board[i][0] == NO) {
             continue
         }
 
@@ -34,9 +38,12 @@ function checkBoardForWinner(board: any) {
             }
         }
     }
+    return 0
+}
 
+function checkHorizontal(board: any) {
     for (let i = 0; i < 3; i++) {
-        if (board[0][i] == 0) {
+        if (board[0][i] == NO) {
             continue
         }
 
@@ -51,18 +58,47 @@ function checkBoardForWinner(board: any) {
             }
         }
     }
+}
+
+function checkBoardForWinner(board: any) {
+    let result = checkVertical(board)
+
+    if (result != 0) {
+        return result
+    }
+
+    result = checkHorizontal(board)
+
+    if (result != 0) {
+        return result
+    }
+
     return null
+}
+
+function boardFilled(board: any){
+    for (let i = 0; i < board.length; i++){
+        for (let j = 0; j < board[i].length; j++){
+            if (board[i][j] == NO){
+                return false
+            }
+        }
+    }
+    return true
 }
 
 
 function Board(props: IProps) {
+    if (boardFilled(props.board)){
+        store.dispatch(finished())
+    }
+
 
     let winner = checkBoardForWinner(props.board)
-    let winnerSymbol = null
-    if (winner === 1) {
-        winnerSymbol = 'X'
-    } else if (winner === -1) {
-        winnerSymbol = 'O'
+
+    if (winner == X || winner == O) {
+        dispatchScores(winner)
+        store.dispatch(finished())
     }
 
     const gameOver = winner != null
@@ -78,44 +114,30 @@ function Board(props: IProps) {
     )
 
     return (
-        <React.Fragment>
-            <View style={{ flex: 3, backgroundColor: 'red'}}>
-                <Text>{winner ? `Winner: ${winnerSymbol}` : null} </Text>
-                <Button title='Restart' onPress={resetGame} />
+        <View style={{
+            flexDirection: 'row',
+        }}>
+            <View >
+                {rows[0][0]}
+                {rows[1][0]}
+                {rows[2][0]}
             </View>
-            <View style={{
-                flex: 6,
-                backgroundColor: 'green',
-            }}>
-                <View style={{
-                    flexDirection: 'row',
-                    justifyContent: 'center'
-                }}>
-                    <View >
-                        {rows[0][0]}
-                        {rows[1][0]}
-                        {rows[2][0]}
-                    </View>
-                    <View >
-                        {rows[0][1]}
-                        {rows[1][1]}
-                        {rows[2][1]}
-                    </View>
-                    <View >
-                        {rows[0][2]}
-                        {rows[1][2]}
-                        {rows[2][2]}
-                    </View>
-                </View>
+            <View >
+                {rows[0][1]}
+                {rows[1][1]}
+                {rows[2][1]}
             </View>
-            <View style={{flex: 3, backgroundColor: 'blue'}}>
+            <View >
+                {rows[0][2]}
+                {rows[1][2]}
+                {rows[2][2]}
             </View>
-        </React.Fragment>)
+        </View>
+    )
 }
 
 export default connect(
     (state: any) => ({
-        board: state.common.board,
-        current: state.common.current
+        board: state.common.board
     })
 )(Board)

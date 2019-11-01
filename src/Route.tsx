@@ -3,6 +3,7 @@ import { View, Text, Dimensions, TouchableHighlight } from 'react-native'
 import store from '../store'
 import { crossRoute, circleRoute, setTurn } from '../actions'
 import { connect } from 'react-redux'
+import {X, O, NO} from '../types'
 
 const DeviceWidth = Dimensions.get('window').width
 
@@ -16,9 +17,9 @@ interface IProps {
 
 function generateLetter(val: number) {
     switch (val) {
-        case 1:
+        case X:
             return 'X'
-        case -1:
+        case O:
             return 'O'
         default:
             return ' '
@@ -27,16 +28,15 @@ function generateLetter(val: number) {
 
 function onPress(props: IProps) {
     return () => {
-        console.log(props.gameOver)
-        if (props.val === 0 && !props.gameOver) {
+        if (props.val === NO && !props.gameOver) {
             switch (props.turn) {
-                case 1:
+                case X:
                     store.dispatch(crossRoute(props.row, props.col))
-                    store.dispatch(setTurn(-1))
+                    store.dispatch(setTurn(O))
                     break
-                case -1:
+                case O:
                     store.dispatch(circleRoute(props.row, props.col))
-                    store.dispatch(setTurn(1))
+                    store.dispatch(setTurn(X))
                     break
 
             }
@@ -46,11 +46,22 @@ function onPress(props: IProps) {
 
 function Route(props: IProps) {
 
+    let color = '#ffffff'
+    if (props.val == X){
+        color = '#009CB8'
+    } else if (props.val == O){
+        color = '#FF6347'
+    }
+
     return (
         <View
-            style={{ borderColor: 'black',backgroundColor:'blue', width: DeviceWidth * 0.28, height: DeviceWidth * 0.28, borderStyle: 'solid', borderWidth: 2 }}>
-            <TouchableHighlight onPress={onPress(props)}>
-                <Text style={{ fontSize: 40, textAlign: 'center' }}>{generateLetter(props.val)}</Text>
+            style={{ borderColor: 'black',
+                     width: DeviceWidth * 0.26,
+                     height: DeviceWidth * 0.26,
+                     borderStyle: 'solid',
+                     borderWidth: 4}}>
+            <TouchableHighlight  style={{height: DeviceWidth * 0.26}} onPress={onPress(props)}>
+                <Text style={{ color: color, fontSize: DeviceWidth * 0.18, textAlign: 'center' }}>{generateLetter(props.val)}</Text>
             </TouchableHighlight>
         </View>
     )
